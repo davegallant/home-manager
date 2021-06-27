@@ -34,6 +34,11 @@ let
     vicmd = "bindkey -a";
   };
 
+  highlighters = {
+    zsh-fast-syntax-highlighting = "source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions/fast-syntax-highlighting.plugin.zsh";
+    zsh-syntax-highlighting = "source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh";
+  };
+
   stateVersion = config.home.stateVersion;
 
   historyModule = types.submodule ({ config, ... }: {
@@ -290,6 +295,17 @@ in
         description = "Enable zsh autosuggestions";
       };
 
+      syntaxHighlighting = {
+        enable = mkOption {
+          default = false;
+          description = "Enable zsh syntax highlighting";
+        };
+        highlighter = mkOption {
+          default = "zsh-syntax-highlighting";
+          description = "The package name of the highlighter"; 
+        };
+      };
+
       history = mkOption {
         type = historyModule;
         default = {};
@@ -480,6 +496,10 @@ in
 
         ${optionalString cfg.enableAutosuggestions
           "source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+        }
+
+        ${optionalString cfg.syntaxHighlighting.enable
+          highlighters."${cfg.syntaxHighlighting.highlighter}"
         }
 
         # Environment variables
